@@ -10,12 +10,53 @@
 <body class="bg-gray-50">
     <div class="max-w-6xl mx-auto p-6 min-h-screen">
         <header class="mb-8">
-            <h1 class="text-3xl font-bold text-gray-800 mb-2">
-                学生ペルソナ活用プロンプト生成ツール
-            </h1>
-            <p class="text-gray-600 mb-6">
-                学生のセルフ・オーサーシップを重視した取り組みやサポートの検討を支援するツール
-            </p>
+            <!-- ツール価値の即座理解セクション -->
+            <div class="text-center mb-6 bg-gradient-to-r from-blue-50 via-indigo-50 to-purple-50 rounded-xl p-6 border border-blue-200">
+                <h1 class="text-3xl font-bold text-gray-800 mb-3">
+                    学生ペルソナ活用プロンプト生成ツール
+                </h1>
+                <p class="text-lg text-gray-700 mb-4">
+                    学生のセルフ・オーサーシップを重視した取り組みやサポートの検討を支援するツール
+                </p>
+                
+                <!-- 価値提案の数値化表示 -->
+                <div class="flex justify-center items-center space-x-8 mb-4">
+                    <div class="text-center">
+                        <div class="text-2xl font-bold text-blue-600">複数種類</div>
+                        <div class="text-sm text-gray-600">分析フレームワーク</div>
+                    </div>
+                    <div class="text-center">
+                        <div class="text-2xl font-bold text-green-600">短時間</div>
+                        <div class="text-sm text-gray-600">で プロンプト生成</div>
+                    </div>
+                    <div class="text-center">
+                        <div class="text-2xl font-bold text-orange-600">5名</div>
+                        <div class="text-sm text-gray-600">まで ペルソナ対応</div>
+                    </div>
+                </div>
+                
+                <!-- クイックスタートボタン -->
+                <div class="flex justify-center space-x-4">
+                    <button
+                        id="quickStartBtn"
+                        class="bg-gradient-to-r from-blue-500 to-indigo-600 text-white px-6 py-3 rounded-lg font-semibold hover:from-blue-600 hover:to-indigo-700 transition-all duration-300 transform hover:scale-105 shadow-lg"
+                        onclick="openPersonaSelectionTool()"
+                    >
+                        <span class="mr-2">🚀</span>ペルソナ作成から始める（別のツールに移動）
+                    </button>
+                    <button
+                        id="fullStartBtn"
+                        class="bg-white text-gray-700 px-6 py-3 rounded-lg font-semibold border-2 border-gray-300 hover:border-blue-400 hover:text-blue-600 transition-all duration-300"
+                        onclick="scrollToCSVUpload()"
+                    >
+                        <span class="mr-2">📁</span>既存のペルソナファイルで利用開始
+                    </button>
+                </div>
+                
+                <div class="mt-3 text-sm text-gray-500">
+                    💡 初回の方は「ペルソナ作成から始める」がおすすめです
+                </div>
+            </div>
             
             <!-- セルフ・オーサーシップ説明パネル -->
             <div class="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg shadow-sm border border-blue-100 mb-6">
@@ -89,7 +130,7 @@
                                 <div class="bg-blue-50 rounded-lg p-3 border border-blue-300">
                                     <h5 class="font-medium text-blue-800 mb-2">✅ セルフ・オーサーシップ重視</h5>
                                     <ul class="text-sm text-blue-700 space-y-1">
-                                        <li>• "学生の内在的な力の成長を後押し"</li>
+                                        <li>• "学生の自律的な成長を後押しする"</li>
                                         <li>• 学生の価値観・目標を出発点とした支援</li>
                                     </ul>
                                 </div>
@@ -113,7 +154,7 @@
                                     <h5 class="font-medium text-blue-800 mb-1">このツールを使うときの留意点</h5>
                                     <p class="text-sm text-blue-700">
                                         生成されるプロンプトは、学生を「支援される対象」ではなく「成長する主体」として捉え、
-                                        一人一人の内在的な力と可能性の成長を後押しするための分析・提案を行います。
+                                        一人一人の自律的な成長を応援・後押しするための分析・提案を行います。
                                     </p>
                                 </div>
                             </div>
@@ -129,7 +170,7 @@
                     <div class="flex items-center space-x-3">
                         <span id="progressPercentage" class="text-sm text-gray-500">0% 完了</span>
                         <button
-                            class="text-xs px-2 py-1 bg-red-50 text-red-600 rounded hover:bg-red-100 transition-colors border border-red-200"
+                            class="text-xs px-2 py-1 bg-transparent text-gray-400 rounded hover:bg-gray-50 transition-colors border border-gray-200"
                             onclick="clearAllSettings()"
                             title="全ての設定をリセット"
                         >
@@ -140,61 +181,84 @@
                 <div class="flex items-center space-x-4">
                     <!-- Step 1: ペルソナ読み込み -->
                     <div class="flex-1 flex items-center">
-                        <div id="step1" class="flex items-center cursor-pointer" onclick="jumpToStep(1)">
-                            <div id="step1Icon" class="w-8 h-8 rounded-full border-2 border-gray-300 bg-gray-100 flex items-center justify-center mr-2 transition-colors">
-                                <span class="text-xs font-semibold text-gray-500">1</span>
+                        <div id="step1" class="flex items-center cursor-pointer relative" onclick="jumpToStep(1)">
+                            <div id="step1Icon" class="w-8 h-8 rounded-full border-2 border-gray-300 bg-gray-100 flex items-center justify-center mr-2 transition-all duration-300">
+                                <span id="step1Text" class="text-xs font-semibold text-gray-500">1</span>
+                                <span id="step1Check" class="text-sm font-bold text-green-600 hidden">✓</span>
                             </div>
                             <div class="hidden sm:block">
                                 <div class="text-xs font-medium text-gray-600">ペルソナ</div>
                                 <div class="text-xs text-gray-400">読み込み</div>
                             </div>
+                            <!-- 点滅アニメーション（アクティブ時） -->
+                            <div id="step1Pulse" class="absolute -inset-1 rounded-full bg-blue-400 opacity-30 animate-pulse hidden"></div>
                         </div>
-                        <div id="progress1" class="flex-1 h-2 bg-gray-200 rounded-full mx-2">
-                            <div class="h-full bg-blue-500 rounded-full transition-all duration-300" style="width: 0%"></div>
+                        <div id="progress1" class="flex-1 h-2 bg-gray-200 rounded-full mx-2 relative">
+                            <div class="h-full bg-blue-500 rounded-full transition-all duration-500" style="width: 0%"></div>
+                            <!-- 矢印アニメーション -->
+                            <div id="arrow1" class="absolute right-0 top-1/2 transform -translate-y-1/2 translate-x-2 text-blue-500 opacity-0 transition-all duration-300 hidden">
+                                ▶
+                            </div>
                         </div>
                     </div>
                     
                     <!-- Step 2: 課題設定 -->
                     <div class="flex-1 flex items-center">
-                        <div id="step2" class="flex items-center cursor-pointer" onclick="jumpToStep(2)">
-                            <div id="step2Icon" class="w-8 h-8 rounded-full border-2 border-gray-300 bg-gray-100 flex items-center justify-center mr-2 transition-colors">
-                                <span class="text-xs font-semibold text-gray-500">2</span>
+                        <div id="step2" class="flex items-center cursor-pointer relative" onclick="jumpToStep(2)">
+                            <div id="step2Icon" class="w-8 h-8 rounded-full border-2 border-gray-300 bg-gray-100 flex items-center justify-center mr-2 transition-all duration-300">
+                                <span id="step2Text" class="text-xs font-semibold text-gray-500">2</span>
+                                <span id="step2Check" class="text-sm font-bold text-green-600 hidden">✓</span>
                             </div>
                             <div class="hidden sm:block">
                                 <div class="text-xs font-medium text-gray-600">課題</div>
                                 <div class="text-xs text-gray-400">設定</div>
                             </div>
+                            <div id="step2Pulse" class="absolute -inset-1 rounded-full bg-purple-400 opacity-30 animate-pulse hidden"></div>
                         </div>
-                        <div id="progress2" class="flex-1 h-2 bg-gray-200 rounded-full mx-2">
-                            <div class="h-full bg-blue-500 rounded-full transition-all duration-300" style="width: 0%"></div>
+                        <div id="progress2" class="flex-1 h-2 bg-gray-200 rounded-full mx-2 relative">
+                            <div class="h-full bg-blue-500 rounded-full transition-all duration-500" style="width: 0%"></div>
+                            <div id="arrow2" class="absolute right-0 top-1/2 transform -translate-y-1/2 translate-x-2 text-purple-500 opacity-0 transition-all duration-300 hidden">
+                                ▶
+                            </div>
                         </div>
                     </div>
                     
                     <!-- Step 3: フレームワーク選択 -->
                     <div class="flex-1 flex items-center">
-                        <div id="step3" class="flex items-center cursor-pointer" onclick="jumpToStep(3)">
-                            <div id="step3Icon" class="w-8 h-8 rounded-full border-2 border-gray-300 bg-gray-100 flex items-center justify-center mr-2 transition-colors">
-                                <span class="text-xs font-semibold text-gray-500">3</span>
+                        <div id="step3" class="flex items-center cursor-pointer relative" onclick="jumpToStep(3)">
+                            <div id="step3Icon" class="w-8 h-8 rounded-full border-2 border-gray-300 bg-gray-100 flex items-center justify-center mr-2 transition-all duration-300">
+                                <span id="step3Text" class="text-xs font-semibold text-gray-500">3</span>
+                                <span id="step3Check" class="text-sm font-bold text-green-600 hidden">✓</span>
                             </div>
                             <div class="hidden sm:block">
                                 <div class="text-xs font-medium text-gray-600">フレーム</div>
                                 <div class="text-xs text-gray-400">ワーク</div>
                             </div>
+                            <div id="step3Pulse" class="absolute -inset-1 rounded-full bg-orange-400 opacity-30 animate-pulse hidden"></div>
                         </div>
-                        <div id="progress3" class="flex-1 h-2 bg-gray-200 rounded-full mx-2">
-                            <div class="h-full bg-blue-500 rounded-full transition-all duration-300" style="width: 0%"></div>
+                        <div id="progress3" class="flex-1 h-2 bg-gray-200 rounded-full mx-2 relative">
+                            <div class="h-full bg-blue-500 rounded-full transition-all duration-500" style="width: 0%"></div>
+                            <div id="arrow3" class="absolute right-0 top-1/2 transform -translate-y-1/2 translate-x-2 text-orange-500 opacity-0 transition-all duration-300 hidden">
+                                ▶
+                            </div>
                         </div>
                     </div>
                     
                     <!-- Step 4: プロンプト生成 -->
                     <div class="flex items-center">
-                        <div id="step4" class="flex items-center cursor-pointer" onclick="jumpToStep(4)">
-                            <div id="step4Icon" class="w-8 h-8 rounded-full border-2 border-gray-300 bg-gray-100 flex items-center justify-center mr-2 transition-colors">
-                                <span class="text-xs font-semibold text-gray-500">4</span>
+                        <div id="step4" class="flex items-center cursor-pointer relative" onclick="jumpToStep(4)">
+                            <div id="step4Icon" class="w-8 h-8 rounded-full border-2 border-gray-300 bg-gray-100 flex items-center justify-center mr-2 transition-all duration-300">
+                                <span id="step4Text" class="text-xs font-semibold text-gray-500">4</span>
+                                <span id="step4Check" class="text-sm font-bold text-green-600 hidden">✓</span>
                             </div>
                             <div class="hidden sm:block">
                                 <div class="text-xs font-medium text-gray-600">生成</div>
                                 <div class="text-xs text-gray-400">完了</div>
+                            </div>
+                            <div id="step4Pulse" class="absolute -inset-1 rounded-full bg-green-400 opacity-30 animate-pulse hidden"></div>
+                            <!-- 完了時の祝福アニメーション -->
+                            <div id="step4Celebration" class="absolute -top-8 left-1/2 transform -translate-x-1/2 text-2xl hidden animate-bounce">
+                                🎉
                             </div>
                         </div>
                     </div>
@@ -384,6 +448,33 @@
 
             <!-- 右側パネル -->
             <div class="space-y-6">
+                <!-- コンテキスト型ヘルプパネル -->
+                <div id="contextualHelpPanel" class="bg-gradient-to-r from-cyan-50 to-blue-50 rounded-lg shadow-md border border-cyan-200">
+                    <div class="p-4">
+                        <div class="flex items-center justify-between mb-3">
+                            <div class="flex items-center">
+                                <span class="w-6 h-6 mr-3 text-cyan-600 flex items-center justify-center">🎯</span>
+                                <h3 class="font-semibold text-cyan-800" id="helpPanelTitle">次のステップ</h3>
+                            </div>
+                            <div class="text-xs bg-cyan-100 text-cyan-700 px-2 py-1 rounded-full" id="helpStepIndicator">
+                                Step 1
+                            </div>
+                        </div>
+                        
+                        <!-- 動的ヘルプコンテンツ -->
+                        <div id="contextualHelpContent" class="text-sm text-cyan-700">
+                            <div class="bg-white rounded-lg p-3 border border-cyan-200">
+                                <div class="flex items-start">
+                                    <span class="text-cyan-500 mr-2 mt-0.5">💡</span>
+                                    <div id="helpMessage">
+                                        まずは「ペルソナ作成から始める」ボタンでペルソナ作成を開始するか、既存のCSVファイルをアップロードしてください。
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
                 <!-- エシカルAI使用指針（独立パネル） -->
                 <div class="bg-gradient-to-r from-red-50 to-orange-50 rounded-lg shadow-md border border-red-200">
                     <div class="p-4">
@@ -579,27 +670,27 @@
                         <!-- プレビューボタン -->
                         <button
                             id="previewBtn"
-                            class="w-full bg-gray-100 text-gray-700 py-2 px-4 rounded-lg font-medium hover:bg-gray-200 disabled:bg-gray-50 disabled:cursor-not-allowed transition-colors border border-gray-300"
+                            class="w-full bg-gradient-to-r from-indigo-100 to-purple-100 text-indigo-700 py-3 px-4 rounded-lg font-medium hover:from-indigo-200 hover:to-purple-200 disabled:bg-gray-50 disabled:cursor-not-allowed transition-all duration-300 border border-indigo-200 shadow-sm"
                             disabled
                         >
                             <span class="mr-2">👁️</span>
                             設定内容をプレビュー
                         </button>
                         
-                        <!-- 生成ボタン -->
+                        <!-- 生成ボタン（最優先） -->
                         <button
                             id="generateBtn"
-                            class="w-full bg-blue-600 text-white py-3 px-6 rounded-lg font-medium hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
+                            class="w-full bg-gradient-to-r from-green-500 to-emerald-600 text-white py-4 px-6 rounded-xl font-bold hover:from-green-600 hover:to-emerald-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-all duration-300 transform hover:scale-105 shadow-lg text-lg"
                             disabled
                         >
-                            <span class="mr-2">✨</span>
-                            プロンプト生成
+                            <span class="mr-2 text-xl">✨</span>
+                            プロンプト生成開始
                         </button>
                         
-                        <!-- リセットボタン（目立つ位置） -->
+                        <!-- リセットボタン（控えめ） -->
                         <button
                             id="mainResetBtn"
-                            class="w-full bg-red-50 text-red-600 py-2 px-4 rounded-lg font-medium hover:bg-red-100 transition-colors border border-red-200"
+                            class="w-full bg-transparent text-gray-500 py-2 px-4 rounded-lg font-normal hover:bg-gray-50 transition-colors border border-gray-200 text-sm"
                             onclick="clearAllSettings()"
                         >
                             <span class="mr-2">🔄</span>
@@ -1166,6 +1257,35 @@
         let selectedFramework = '';
         let frameworkSelectionReason = ''; // 選択理由記録用
         let customFrameworkText = ''; // カスタムフレームワーク記録用
+        let isQuickDemo = false; // サンプル体験モードフラグ
+        
+        // サンプルペルソナデータ
+        const samplePersonas = [
+            {
+                name: "田中 花子（仮名）",
+                age: "19",
+                department: "文学部 心理学科",
+                personality: "内向的だが好奇心旺盛、完璧主義的傾向",
+                values: "真の学びと自己成長を重視、他者との深いつながりを求める",
+                learning_attitude: "じっくり考えて理解したい、質問するのは苦手だが一度理解すると深く探求"
+            },
+            {
+                name: "佐藤 太郎（仮名）",
+                age: "20",
+                department: "経営学部 経営学科",
+                personality: "社交的で行動力があるが、計画性に課題",
+                values: "実践的な学びと将来への応用を重視、チームワークを大切にする",
+                learning_attitude: "体験を通して学びたい、議論や発表は得意だが持続的学習に課題"
+            },
+            {
+                name: "山田 美咲（仮名）",
+                age: "21",
+                department: "工学部 情報工学科",
+                personality: "論理的思考力が高く、問題解決志向",
+                values: "効率性と技術的成長を重視、社会貢献への関心が高い",
+                learning_attitude: "自分のペースで学習したい、新しい技術への探求心が強い"
+            }
+        ];
 
         // プリセット課題
         const presetChallenges = {
@@ -1305,6 +1425,62 @@
             setupEventListeners();
             restoreSettings();
         });
+        
+        // サンプル体験機能
+        function startQuickDemo() {
+            isQuickDemo = true;
+            
+            // サンプルデータを読み込み
+            personas = [...samplePersonas];
+            
+            // UI状態を更新
+            showPersonaSection();
+            displayPersonas();
+            updateProgress();
+            
+            // ペルソナセクションにスクロール
+            document.getElementById('personaSection').scrollIntoView({ 
+                behavior: 'smooth',
+                block: 'center'
+            });
+            
+            // サンプルデモ表示
+            showDemoNotification();
+        }
+        
+        function showDemoNotification() {
+            const notification = document.createElement('div');
+            notification.className = 'fixed top-4 right-4 bg-blue-500 text-white px-4 py-2 rounded-lg shadow-lg z-50 animate-pulse';
+            notification.innerHTML = `
+                <div class="flex items-center">
+                    <span class="mr-2">🚀</span>
+                    <span class="text-sm font-medium">サンプルデータで体験中</span>
+                </div>
+            `;
+            document.body.appendChild(notification);
+            
+            // 5秒後に非表示
+            setTimeout(() => {
+                notification.remove();
+            }, 5000);
+        }
+        
+        function openPersonaSelectionTool() {
+            window.open('https://hirokioshiro.github.io/persona_selection_tool/', '_blank');
+        }
+        
+        function scrollToCSVUpload() {
+            document.getElementById('csvFile').scrollIntoView({ 
+                behavior: 'smooth',
+                block: 'center'
+            });
+            // CSVアップロード欄をハイライト
+            const csvSection = document.getElementById('csvFile').closest('.bg-white');
+            csvSection.classList.add('ring-2', 'ring-blue-400', 'ring-opacity-50');
+            setTimeout(() => {
+                csvSection.classList.remove('ring-2', 'ring-blue-400', 'ring-opacity-50');
+            }, 3000);
+        }
 
         function initializeUI() {
             // 課題選択肢を生成
@@ -1834,6 +2010,107 @@
             // 設定の自動保存
             saveSettings();
         }
+        
+        // ビジュアル強化版ステップ更新
+        function updateStepStatusEnhanced(stepNum, isComplete, minProgress, maxProgress) {
+            const icon = document.getElementById(`step${stepNum}Icon`);
+            const text = document.getElementById(`step${stepNum}Text`);
+            const check = document.getElementById(`step${stepNum}Check`);
+            const progress = document.getElementById(`progress${stepNum}`);
+            
+            if (isComplete) {
+                // 完了状態
+                icon.className = 'w-8 h-8 rounded-full border-2 border-green-500 bg-green-500 flex items-center justify-center mr-2 transition-all duration-300';
+                text.classList.add('hidden');
+                check.classList.remove('hidden');
+                if (progress) {
+                    progress.querySelector('div').style.width = '100%';
+                    progress.querySelector('div').className = 'h-full bg-green-500 rounded-full transition-all duration-500';
+                }
+                
+                // 完了アニメーション
+                setTimeout(() => {
+                    icon.classList.add('animate-pulse');
+                    setTimeout(() => icon.classList.remove('animate-pulse'), 1000);
+                }, 100);
+            } else {
+                // 未完了状態
+                icon.className = 'w-8 h-8 rounded-full border-2 border-gray-300 bg-gray-100 flex items-center justify-center mr-2 transition-all duration-300';
+                text.classList.remove('hidden');
+                check.classList.add('hidden');
+                if (progress) {
+                    progress.querySelector('div').style.width = maxProgress + '%';
+                    progress.querySelector('div').className = 'h-full bg-blue-500 rounded-full transition-all duration-500';
+                }
+            }
+        }
+        
+        // アクティブステップの視覚的表示
+        function showActiveStepIndicator(activeStep) {
+            // 全ての点滅効果をクリア
+            for (let i = 1; i <= 4; i++) {
+                const pulse = document.getElementById(`step${i}Pulse`);
+                const arrow = document.getElementById(`arrow${i}`);
+                if (pulse) pulse.classList.add('hidden');
+                if (arrow) arrow.classList.add('hidden', 'opacity-0');
+            }
+            
+            // アクティブステップの点滅効果
+            const activePulse = document.getElementById(`step${activeStep}Pulse`);
+            if (activePulse) {
+                activePulse.classList.remove('hidden');
+            }
+            
+            // 次のステップへの矢印表示
+            if (activeStep < 4) {
+                const arrow = document.getElementById(`arrow${activeStep}`);
+                if (arrow) {
+                    arrow.classList.remove('hidden');
+                    setTimeout(() => arrow.classList.remove('opacity-0'), 100);
+                }
+            }
+            
+            // Step 4完了時の祝福アニメーション
+            if (activeStep === 4) {
+                const celebration = document.getElementById('step4Celebration');
+                if (celebration) {
+                    celebration.classList.remove('hidden');
+                    setTimeout(() => celebration.classList.add('hidden'), 3000);
+                }
+            }
+        }
+        
+        // コンテキスト型ヘルプシステム
+        function updateContextualHelp(activeStep) {
+            const helpPanelTitle = document.getElementById('helpPanelTitle');
+            const helpStepIndicator = document.getElementById('helpStepIndicator');
+            const helpMessage = document.getElementById('helpMessage');
+            
+            const helpContent = {
+                1: {
+                    title: "ペルソナファイルの準備",
+                    message: "まずは「ペルソナ作成から始める」ボタンでペルソナ作成から開始するか、学生ペルソナ情報を含むCSVファイルをアップロードしてください。初回の方は「ペルソナ作成から始める」がおすすめです。"
+                },
+                2: {
+                    title: "課題・疑問の設定",
+                    message: "検討したい教育課題を選択してください。学習効果向上系や学生生活支援系から選ぶか、独自の課題を自由記述で入力できます。"
+                },
+                3: {
+                    title: "分析手法の選択",
+                    message: "課題に適したフレームワークを選択してください。各手法の詳細説明を参考に、学生のセルフ・オーサーシップを重視した分析手法を選びましょう。"
+                },
+                4: {
+                    title: "プロンプト生成の準備",
+                    message: "設定内容をプレビューで確認してから、プロンプトを生成してください。エシカルな使用指針を確認することも重要です。"
+                }
+            };
+            
+            const content = helpContent[activeStep] || helpContent[1];
+            
+            helpPanelTitle.textContent = content.title;
+            helpStepIndicator.textContent = `Step ${activeStep}`;
+            helpMessage.textContent = content.message;
+        }
 
         function updateProgressBar() {
             const step1Complete = personas.length > 0 && selectedPersonas.length > 0;
@@ -1841,17 +2118,23 @@
             const step3Complete = selectedFramework && (selectedFramework !== 'custom' || customFrameworkText.trim());
             const step4Complete = step1Complete && step2Complete && step3Complete;
 
-            // ステップ1: ペルソナ読み込み・選択
-            updateStepStatus(1, step1Complete, personas.length > 0 ? 50 : 0, selectedPersonas.length > 0 ? 100 : (personas.length > 0 ? 50 : 0));
+            // ビジュアル強化版のステップ更新
+            updateStepStatusEnhanced(1, step1Complete, personas.length > 0 ? 50 : 0, selectedPersonas.length > 0 ? 100 : (personas.length > 0 ? 50 : 0));
+            updateStepStatusEnhanced(2, step2Complete, 0, step2Complete ? 100 : 0);
+            updateStepStatusEnhanced(3, step3Complete, 0, step3Complete ? 100 : 0);
+            updateStepStatusEnhanced(4, step4Complete, 0, step4Complete ? 100 : 0);
+
+            // 現在のアクティブステップを特定
+            let activeStep = 1;
+            if (step1Complete && !step2Complete) activeStep = 2;
+            else if (step2Complete && !step3Complete) activeStep = 3;
+            else if (step3Complete && !step4Complete) activeStep = 4;
             
-            // ステップ2: 課題設定
-            updateStepStatus(2, step2Complete, 0, step2Complete ? 100 : 0);
+            // アクティブステップのビジュアル効果
+            showActiveStepIndicator(activeStep);
             
-            // ステップ3: フレームワーク選択
-            updateStepStatus(3, step3Complete, 0, step3Complete ? 100 : 0);
-            
-            // ステップ4: 生成準備完了
-            updateStepStatus(4, step4Complete, 0, step4Complete ? 100 : 0);
+            // コンテキスト型ヘルプの更新
+            updateContextualHelp(activeStep);
 
             // 全体の進捗パーセンテージ
             const completedSteps = [step1Complete, step2Complete, step3Complete, step4Complete].filter(Boolean).length;
@@ -2683,7 +2966,6 @@ ${frameworkDescription}
                 const element = document.querySelector(`#frameworkList [onclick*="${fw.id}"]`);
                 if (element) {
                     const parent = element.closest('.border');
-                    parent.classList.remove('border-green-300', 'bg-green-50');
                     
                     // 既存の推奨バッジを削除
                     const existingBadge = parent.querySelector('.recommended-badge');
@@ -2698,7 +2980,6 @@ ${frameworkDescription}
                 const element = document.querySelector(`#frameworkList [onclick*="${frameworkId}"]`);
                 if (element) {
                     const parent = element.closest('.border');
-                    parent.classList.add('border-green-300', 'bg-green-50');
                     
                     // 推奨バッジを追加
                     const badge = document.createElement('div');
