@@ -1360,6 +1360,24 @@
                 combinations: ['共感マップ', 'サービスブループリント']
             },
             {
+                id: 'user_story_mapping',
+                name: 'ユーザーストーリーマッピング',
+                description: '学生の学習・成長ニーズを価値ある体験として構造化',
+                applicationScenarios: [
+                    '学生の多様な学習ニーズを体系的に整理したい場合',
+                    '学習体験の価値と優先順位を明確化したい場合',
+                    '段階的な支援プログラムを設計したい場合'
+                ],
+                expectedEffects: [
+                    '学習ニーズの体系的な可視化',
+                    '価値に基づく支援の優先順位付け',
+                    '段階的な学習体験設計の実現'
+                ],
+                autonomyRationale: '学生自身の学習価値観を中心に置き、自律的な学習計画立案を支援',
+                recommendedFor: ['学習習慣・時間管理改善', 'アクティブラーニング促進', '個別学習支援'],
+                combinations: ['学生ジャーニーマップ', '共感マップ']
+            },
+            {
                 id: 'service_blueprint',
                 name: 'サービスブループリント',
                 description: 'サービス提供プロセスの可視化',
@@ -1411,7 +1429,7 @@
                 ],
                 autonomyRationale: '学生の感情・価値観を深く理解し尊重することで自己決定を支援',
                 recommendedFor: ['ウェルビーイング向上', '学習モチベーション向上', '個別学習支援'],
-                combinations: ['ペルソナ個別インタビュー', '学生ジャーニーマップ']
+                combinations: ['ペルソナ個別インタビュー', '学生ジャーニーマップ', 'ユーザーストーリーマッピング']
             }
         ];
 
@@ -2927,10 +2945,10 @@ ${frameworkDescription}
                 // 学習効果向上系
                 '学習モチベーション向上': ['empathy_map', 'persona_interview'],
                 '授業理解度・満足度向上': ['student_journey', 'service_blueprint'],
-                '学習習慣・時間管理改善': ['student_journey', 'empathy_map'],
+                '学習習慣・時間管理改善': ['user_story_mapping', 'student_journey'],
                 'デジタル学習環境最適化': ['service_blueprint', 'ecosystem_map'],
-                'アクティブラーニング促進': ['persona_discussion', 'ecosystem_map'],
-                '個別学習支援': ['persona_interview', 'empathy_map'],
+                'アクティブラーニング促進': ['user_story_mapping', 'persona_discussion'],
+                '個別学習支援': ['user_story_mapping', 'persona_interview'],
                 
                 // 学生生活支援系
                 'キャリア支援・就職活動支援': ['persona_interview', 'student_journey'],
