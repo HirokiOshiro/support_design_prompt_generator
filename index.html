@@ -6,8 +6,56 @@
     <title>学生ペルソナ活用プロンプト生成ツール</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+    <style>
+        /* ツールチップのスタイル */
+        .framework-tooltip {
+            position: absolute;
+            z-index: 1000;
+            background: white;
+            border: 2px solid #10b981;
+            border-radius: 12px;
+            padding: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            max-width: 400px;
+            min-width: 300px;
+            pointer-events: none;
+            opacity: 0;
+            transform: translateY(10px);
+            transition: all 0.3s ease;
+        }
+        
+        .framework-tooltip.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .framework-tooltip.hidden {
+            opacity: 0;
+            transform: translateY(10px);
+            visibility: hidden;
+        }
+        
+        .framework-tooltip::before {
+            content: '';
+            position: absolute;
+            top: -6px;
+            left: 20px;
+            border-left: 6px solid transparent;
+            border-right: 6px solid transparent;
+            border-bottom: 6px solid #10b981;
+        }
+        
+        .framework-item {
+            position: relative;
+        }
+    </style>
 </head>
 <body class="bg-gray-50">
+    <!-- フレームワークツールチップ -->
+    <div id="framework-tooltip" class="framework-tooltip hidden absolute z-50 bg-white border border-gray-300 rounded-lg shadow-lg max-w-sm">
+        <div id="tooltip-content"></div>
+    </div>
+
     <div class="max-w-6xl mx-auto p-6 min-h-screen">
         <header class="mb-8">
             <!-- ツール価値の即座理解セクション -->
@@ -428,16 +476,162 @@
 
                 <!-- 3. フレームワーク選択 -->
                 <div class="bg-white rounded-lg shadow-md p-6">
-                    <div class="flex items-center mb-4">
-                        <span class="w-5 h-5 mr-2 text-orange-600 flex items-center justify-center">⚙️</span>
-                        <h2 class="text-xl font-semibold">3. フレームワーク選択</h2>
-                        <button
-                            class="ml-2 w-5 h-5 rounded-full bg-gray-200 text-gray-600 text-xs hover:bg-gray-300 transition-colors"
-                            onclick="showTooltip('framework-help')"
-                            title="フレームワーク選択について"
-                        >
-                            ?
-                        </button>
+                    <div class="flex items-center mb-6">
+                        <span class="w-5 h-5 mr-2 text-orange-600 flex items-center justify-center">🔍</span>
+                        <h2 class="text-xl font-semibold">3. 分析の視点を選択</h2>
+                    </div>
+
+                    <!-- サービスデザイン基本概念の説明パネル -->
+                    <div class="bg-gradient-to-r from-orange-50 to-yellow-50 rounded-lg border border-orange-200 mb-6">
+                        <div class="p-4">
+                            <button
+                                class="w-full flex items-center justify-between text-left hover:bg-orange-50 rounded-lg p-2 transition-colors"
+                                onclick="toggleFrameworkGuide()"
+                            >
+                                <div class="flex items-center">
+                                    <span class="w-6 h-6 mr-3 text-orange-600 flex items-center justify-center">✨</span>
+                                    <div>
+                                        <h3 class="font-semibold text-orange-800">何をするのか</h3>
+                                        <p class="text-sm text-orange-600">いろいろな角度から学生の状況を見ようとする</p>
+                                    </div>
+                                </div>
+                                <span id="frameworkGuideIcon" class="text-2xl text-orange-600 transition-transform">▼</span>
+                            </button>
+                            
+                            <div id="frameworkGuideContent" class="hidden mt-4 pt-4 border-t border-orange-200">
+                                <div class="space-y-4">
+                                    <div class="bg-white rounded-lg p-4 border border-orange-300">
+                                        <h4 class="font-medium text-orange-800 mb-3 flex items-center">
+                                            <span class="mr-2">🎨</span>普通は見えてこないものを見ようとする
+                                        </h4>
+                                        <p class="text-sm text-orange-700 mb-3">
+                                            人の気持ちや日々の体験の全体は普段はなかなか見えにくいものです。
+                                            それを知ろうとするためには色々な「見方」をすることが大切です。
+                                        </p>
+                                    </div>
+                                    
+                                    <div class="bg-white rounded-lg p-4 border border-orange-300">
+                                        <h4 class="font-medium text-orange-800 mb-3 flex items-center">
+                                            <span class="mr-2">🔄</span>多面性を捉えるために見方を組み合わせる
+                                        </h4>
+                                        <p class="text-sm text-orange-700 mb-3">
+                                            一つの視点からでも見えるものはたくさんありますが、見方を組み合わせると、
+                                            その状況がより立体的に浮かび上がってくることになります。
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 分析フローと組み合わせパターンの可視化 -->
+                    <div class="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg border border-blue-200 mb-6">
+                        <div class="p-4">
+                            <button
+                                class="w-full flex items-center justify-between text-left hover:bg-blue-50 rounded-lg p-2 transition-colors"
+                                onclick="toggleAnalysisFlow()"
+                            >
+                                <div class="flex items-center">
+                                    <span class="w-6 h-6 mr-3 text-blue-600 flex items-center justify-center">🎯</span>
+                                    <div>
+                                        <h3 class="font-semibold text-blue-800">よく使われる組み合わせ例</h3>
+                                        <p class="text-sm text-blue-600">あくまでも参考例で自由に組み合わせてください</p>
+                                    </div>
+                                </div>
+                                <span id="analysisFlowIcon" class="text-2xl text-blue-600 transition-transform">▼</span>
+                            </button>
+                            
+                            <div id="analysisFlowContent" class="hidden mt-4 pt-4 border-t border-blue-200">
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <!-- パターン1：感情重視 -->
+                                    <div class="bg-white rounded-lg p-4 border border-blue-300">
+                                        <h4 class="font-medium text-blue-800 mb-2 flex items-center">
+                                            <span class="mr-2">❤️</span>気持ちを大切にしたい
+                                        </h4>
+                                        <div class="space-y-2">
+                                            <div class="flex items-center text-sm text-blue-700">
+                                                <span class="w-6 h-6 bg-blue-100 rounded-full flex items-center justify-center text-xs mr-2">1</span>
+                                                共感マップ<br>（感情の整理）
+                                            </div>
+                                            <div class="text-center text-blue-400">↓</div>
+                                            <div class="flex items-center text-sm text-blue-700">
+                                                <span class="w-6 h-6 bg-blue-100 rounded-full flex items-center justify-center text-xs mr-2">2</span>
+                                                ペルソナインタビュー<br>（深く聞く）
+                                            </div>
+                                        </div>
+                                        <p class="text-xs text-blue-600 mt-2 bg-blue-50 rounded p-2">
+                                            学生の内面を理解したい時に
+                                        </p>
+                                    </div>
+
+                                    <!-- パターン2：時間の流れ重視 -->
+                                    <div class="bg-white rounded-lg p-4 border border-green-300">
+                                        <h4 class="font-medium text-green-800 mb-2 flex items-center">
+                                            <span class="mr-2">⏰</span>変化の様子を見たい
+                                        </h4>
+                                        <div class="space-y-2">
+                                            <div class="flex items-center text-sm text-green-700">
+                                                <span class="w-6 h-6 bg-green-100 rounded-full flex items-center justify-center text-xs mr-2">1</span>
+                                                学生ジャーニーマップ<br>（時間の流れ）
+                                            </div>
+                                            <div class="text-center text-green-400">↓</div>
+                                            <div class="flex items-center text-sm text-green-700">
+                                                <span class="w-6 h-6 bg-green-100 rounded-full flex items-center justify-center text-xs mr-2">2</span>
+                                                共感マップ<br>（特定の場面）
+                                            </div>
+                                        </div>
+                                        <p class="text-xs text-green-600 mt-2 bg-green-50 rounded p-2">
+                                            「いつから変わったんだろう？」という時に
+                                        </p>
+                                    </div>
+
+                                    <!-- パターン3：全体把握 -->
+                                    <div class="bg-white rounded-lg p-4 border border-purple-300">
+                                        <h4 class="font-medium text-purple-800 mb-2 flex items-center">
+                                            <span class="mr-2">🌟</span>全体像を掴みたい
+                                        </h4>
+                                        <div class="space-y-2">
+                                            <div class="flex items-center text-sm text-purple-700">
+                                                <span class="w-6 h-6 bg-purple-100 rounded-full flex items-center justify-center text-xs mr-2">1</span>
+                                                エコシステムマップ<br>（周りの環境）
+                                            </div>
+                                            <div class="text-center text-purple-400">↓</div>
+                                            <div class="flex items-center text-sm text-purple-700">
+                                                <span class="w-6 h-6 bg-purple-100 rounded-full flex items-center justify-center text-xs mr-2">2</span>
+                                                ステークホルダーマップ<br>（関わる人）
+                                            </div>
+                                        </div>
+                                        <p class="text-xs text-purple-600 mt-2 bg-purple-50 rounded p-2">
+                                            「どんな環境にいるんだろう？」という時に
+                                        </p>
+                                    </div>
+
+                                    <!-- 自由な使い方 -->
+                                    <div class="bg-white rounded-lg p-4 border border-yellow-300">
+                                        <h4 class="font-medium text-yellow-800 mb-2 flex items-center">
+                                            <span class="mr-2">🎨</span>自由に組み合わせ
+                                        </h4>
+                                        <p class="text-sm text-yellow-700">
+                                            ここに挙げたパターン以外も組み合わせ可能。
+                                            気になったものを選んで自由に試してみてください。
+                                        </p>
+                                        <p class="text-xs text-yellow-600 mt-2 bg-yellow-50 rounded p-2">
+                                            「見てみると面白そう。」「他の人にも意見を聞いてみよう」という直感から。
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- フレームワーク選択エリア -->
+                    <div class="mb-4">
+                        <h3 class="font-medium text-gray-700 mb-3 flex items-center">
+                            <span class="mr-2">🔍</span>どの視点で見てみますか？
+                        </h3>
+                        <p class="text-sm text-gray-600 mb-4">
+                            興味のある方法をクリックしてください。
+                        </p>
                     </div>
                     
                     <div class="space-y-3" id="frameworkList">
@@ -1308,7 +1502,7 @@
             {
                 id: 'empathy_map',
                 name: '共感マップ',
-                description: '学生の感情・認知・行動の詳細分析',
+                description: '学生さんの気持ちや考えを整理してみる方法です',
                 applicationScenarios: [
                     '学生の感情的ニーズを深く理解したい場合',
                     '認知的負荷や心理的課題を把握したい場合',
@@ -1325,8 +1519,8 @@
             },
             {
                 id: 'persona_interview',
-                name: 'ペルソナ個別インタビュー',
-                description: '学生ペルソナに対するインタビュー形式での深掘り',
+                name: 'ペルソナインタビュー',
+                description: '学生さんに話を聞く感じで理解を深める方法です',
                 applicationScenarios: [
                     '個別の学習課題や悩みを深く理解したい場合',
                     '学生の内面的動機や価値観を探りたい場合',
@@ -1343,8 +1537,8 @@
             },
             {
                 id: 'persona_discussion',
-                name: 'ペルソナグループディスカッション',
-                description: '複数ペルソナによる議論・対話',
+                name: 'ペルソナディスカッション',
+                description: '複数の学生さんの対話を想像してみる方法です',
                 applicationScenarios: [
                     '異なる背景の学生間の相互理解を促進したい場合',
                     '多様な視点から課題解決策を検討したい場合',
@@ -1362,7 +1556,7 @@
             {
                 id: 'student_journey',
                 name: '学生ジャーニーマップ',
-                description: '学生の体験・行動・感情の時系列マッピング',
+                description: '時間の流れに沿って学生さんの体験を追ってみる方法です',
                 applicationScenarios: [
                     '学習プロセス全体での課題を把握したい場合',
                     '時期別の支援ニーズを明確化したい場合',
@@ -1380,7 +1574,7 @@
             {
                 id: 'user_story_mapping',
                 name: 'ユーザーストーリーマッピング',
-                description: '学生の学習・成長ニーズを価値ある体験として構造化',
+                description: '学生さんの「こんなことがしたい」を整理する方法です',
                 applicationScenarios: [
                     '学生の多様な学習ニーズを体系的に整理したい場合',
                     '学習体験の価値と優先順位を明確化したい場合',
@@ -1396,27 +1590,27 @@
                 combinations: ['学生ジャーニーマップ', '共感マップ']
             },
             {
-                id: 'service_blueprint',
-                name: 'サービスブループリント',
-                description: 'サービス提供プロセスの可視化',
+                id: 'stakeholder_map',
+                name: 'ステークホルダーマップ',
+                description: '学生さんの周りの人たちとの関係を見てみる方法です',
                 applicationScenarios: [
-                    '教育サービス・支援体制を改善したい場合',
-                    '学生と教員・職員の接点を最適化したい場合',
-                    'システマティックな支援体制を構築したい場合'
+                    '学生に影響を与える関係者を体系的に把握したい場合',
+                    '各ステークホルダーの関心度や影響力を分析したい場合',
+                    '効果的な関係者連携戦略を立案したい場合'
                 ],
                 expectedEffects: [
-                    '支援プロセスの全体最適化',
-                    'タッチポイントでの学生体験向上',
-                    '効率的で効果的な支援体制の構築'
+                    'ステークホルダーの影響力・関心度の明確化',
+                    '関係者との効果的なコミュニケーション戦略の構築',
+                    '支援体制における役割分担の最適化'
                 ],
-                autonomyRationale: 'サービス側の改善により学生の選択肢と自律性を間接的に支援',
-                recommendedFor: ['デジタル学習環境最適化', '経済的支援制度改善', 'キャリア支援・就職活動支援'],
-                combinations: ['エコシステムマップ', 'ステークホルダーマップ']
+                autonomyRationale: '学生を中心とした関係者ネットワークを明確化し、学生の選択を支援する環境を構築',
+                recommendedFor: ['学生コミュニティ形成', 'キャリア支援・就職活動支援', 'ウェルビーイング向上'],
+                combinations: ['エコシステムマップ', 'サービスブループリント', 'ペルソナ個別インタビュー']
             },
             {
                 id: 'ecosystem_map',
                 name: 'エコシステムマップ',
-                description: '学生を取り巻く環境・関係性の全体像',
+                description: '学生さんを取り巻く環境全体を眺めてみる方法です',
                 applicationScenarios: [
                     '学生の置かれている環境全体を把握したい場合',
                     '関係者間の連携を強化したい場合',
@@ -1432,22 +1626,22 @@
                 combinations: ['ステークホルダーマップ', 'サービスブループリント']
             },
             {
-                id: 'stakeholder_map',
-                name: 'ステークホルダーマップ',
-                description: '学生を取り巻く関係者の影響力と関心度の可視化',
+                id: 'service_blueprint',
+                name: 'サービスブループリント',
+                description: '提供している支援やサービスの仕組みを見直す方法です',
                 applicationScenarios: [
-                    '学生に影響を与える関係者を体系的に把握したい場合',
-                    '各ステークホルダーの関心度や影響力を分析したい場合',
-                    '効果的な関係者連携戦略を立案したい場合'
+                    '教育サービス・支援体制を改善したい場合',
+                    '学生と教員・職員の接点を最適化したい場合',
+                    'システマティックな支援体制を構築したい場合'
                 ],
                 expectedEffects: [
-                    'ステークホルダーの影響力・関心度の明確化',
-                    '関係者との効果的なコミュニケーション戦略の構築',
-                    '支援体制における役割分担の最適化'
+                    '支援プロセスの全体最適化',
+                    'タッチポイントでの学生体験向上',
+                    '効率的で効果的な支援体制の構築'
                 ],
-                autonomyRationale: '学生を中心とした関係者ネットワークを明確化し、学生の選択を支援する環境を構築',
-                recommendedFor: ['学生コミュニティ形成', 'キャリア支援・就職活動支援', 'ウェルビーイング向上'],
-                combinations: ['エコシステムマップ', 'サービスブループリント', 'ペルソナ個別インタビュー']
+                autonomyRationale: 'サービス側の改善により学生の選択肢と自律性を間接的に支援',
+                recommendedFor: ['デジタル学習環境最適化', '経済的支援制度改善', 'キャリア支援・就職活動支援'],
+                combinations: ['エコシステムマップ', 'ステークホルダーマップ']
             },
         ];
 
@@ -1551,10 +1745,12 @@
             const frameworkDiv = document.getElementById('frameworkList');
             frameworks.forEach(fw => {
                 const div = document.createElement('div');
-                div.className = 'border rounded-lg transition-colors border-gray-200 hover:border-gray-300';
+                div.className = 'framework-item border rounded-lg transition-colors border-gray-200 hover:border-gray-300';
                 
                 div.innerHTML = `
-                    <div class="p-3 cursor-pointer" onclick="selectFramework('${fw.id}', this.parentElement)">
+                    <div class="p-3 cursor-pointer" onclick="selectFramework('${fw.id}', this.parentElement)"
+                         onmouseenter="showFrameworkTooltip(event, '${fw.id}')"
+                         onmouseleave="hideFrameworkTooltip()">
                         <div class="flex items-center justify-between">
                             <div class="flex-1">
                                 <div class="flex items-center justify-between mb-2">
@@ -2223,15 +2419,37 @@
             let selectedFrameworkData;
             let frameworkName;
             let frameworkDescription;
+            let executionInstruction;
+            
+            // フレームワーク別の実行指示
+            const frameworkInstructions = {
+                'empathy_map': '上記の学生ペルソナを対象に、「${finalChallenge}」という課題について共感マップを作成してください。各ペルソナの「考えていること・感じていること」「見ているもの」「聞いていること」「言っていること・行動」「痛み・フラストレーション」「得たいもの・ニーズ」を具体的に分析し、学生の内面世界を深く理解できるよう整理してください。',
+                
+                'persona_interview': '上記の学生ペルソナを対象に、「${finalChallenge}」という課題についてペルソナインタビューを実施してください。各ペルソナとの対話を通じて、学習経験、価値観、動機、課題に対する本音を引き出すよう、思考の変遷・展開を捉えられる対話形式で出力してください。インタビューの流れと学生の心の動きが自然に伝わるよう構成してください。',
+                
+                'persona_discussion': '上記の学生ペルソナを対象に、「${finalChallenge}」という課題についてペルソナディスカッションを実施してください。複数のペルソナ間での対話・議論を想定し、異なる視点や価値観がぶつかり合い、新たな気づきや解決策が生まれる過程を対話形式で表現してください。各ペルソナの個性と多様性が活かされた建設的な議論展開を描いてください。',
+                
+                'student_journey': '上記の学生ペルソナを対象に、「${finalChallenge}」という課題について学生ジャーニーマップを作成してください。時間軸に沿った学生の体験、感情、行動、タッチポイントを整理し、課題が発生・解決される過程を可視化してください。各段階での学生の心境変化と支援ニーズを明確に示し、体系的な理解が進むよう情報を構造化してください。',
+                
+                'user_story_mapping': '上記の学生ペルソナを対象に、「${finalChallenge}」という課題についてユーザーストーリーマッピングを実施してください。学生の学習価値、基本的ニーズから発展的ニーズまでを階層的に整理し、優先順位と実現ステップを可視化してください。学生視点での「〜したい」「〜できるようになりたい」という願いを中心とした体系的なマップを作成してください。',
+                
+                'stakeholder_map': '上記の学生ペルソナを対象に、「${finalChallenge}」という課題についてステークホルダーマップを作成してください。学生に関わる人々・組織の影響力と関心度を分析し、マトリクス形式で可視化してください。各ステークホルダーとの関係性、期待、課題を整理し、効果的な連携戦略が立案できるよう体系的に情報を構造化してください。',
+                
+                'ecosystem_map': '上記の学生ペルソナを対象に、「${finalChallenge}」という課題についてエコシステムマップを作成してください。学生を取り巻く環境要因、関係者、システム、リソースを包括的に可視化し、相互関係と影響を明確に示してください。環境全体の構造と課題解決に向けた システム改善点を体系的に整理してください。',
+                
+                'service_blueprint': '上記の学生ペルソナを対象に、「${finalChallenge}」という課題についてサービスブループリントを作成してください。学生が体験するフロントステージと見えないバックステージを明確に区分し、タッチポイント、プロセス、支援システムを可視化してください。サービス提供の流れと改善ポイントを体系的に整理し、実装可能な改善案を示してください。'
+            };
             
             if (selectedFramework === 'custom') {
                 frameworkName = 'カスタムフレームワーク';
                 frameworkDescription = customFrameworkText.trim();
                 selectedFrameworkData = { name: frameworkName, description: frameworkDescription };
+                executionInstruction = `上記の学生ペルソナを対象に、「${finalChallenge}」という課題について${frameworkDescription}を実施してください。設定されたフレームワークの特性を活かし、学生のセルフ・オーサーシップを促進する分析を行ってください。`;
             } else {
                 selectedFrameworkData = frameworks.find(f => f.id === selectedFramework);
                 frameworkName = selectedFrameworkData.name;
                 frameworkDescription = selectedFrameworkData.description;
+                executionInstruction = frameworkInstructions[selectedFramework].replace('${finalChallenge}', finalChallenge);
             }
 
             const personaSection = selectedPersonaData.map((persona, index) => `
@@ -2273,7 +2491,7 @@ ${finalChallenge}
 ${frameworkDescription}
 
 ## 【実行指示】
-上記の学生ペルソナを対象に、「${finalChallenge}」という課題について${frameworkName}を実施してください。
+${executionInstruction}
 
 ## 【実行前の確認】
 実行前に、さらに詳細な条件の設定が必要かどうかを確認してください。
@@ -2290,7 +2508,7 @@ ${frameworkDescription}
 - 学生の主体性を促進する具体的なアプローチ提案
 - 実装可能で実践的な改善案
 
-分析結果を、構造化された形式で、具体例を交えながら提示してください。`;
+分析結果を、可視化案や具体例も交えながら、構造化された形式で提示してください。思考を触発する問いも含めてください。`;
 
             document.getElementById('generatedPrompt').textContent = prompt;
             document.getElementById('promptSection').classList.remove('hidden');
@@ -3025,6 +3243,176 @@ ${frameworkDescription}
                     parent.appendChild(badge);
                 }
             });
+        }
+
+        // 新しいトグル機能
+        function toggleFrameworkGuide() {
+            const content = document.getElementById('frameworkGuideContent');
+            const icon = document.getElementById('frameworkGuideIcon');
+            
+            if (content && icon) {
+                if (content.classList.contains('hidden')) {
+                    content.classList.remove('hidden');
+                    icon.style.transform = 'rotate(180deg)';
+                } else {
+                    content.classList.add('hidden');
+                    icon.style.transform = 'rotate(0deg)';
+                }
+            }
+        }
+
+        function toggleAnalysisFlow() {
+            const content = document.getElementById('analysisFlowContent');
+            const icon = document.getElementById('analysisFlowIcon');
+            
+            if (content && icon) {
+                if (content.classList.contains('hidden')) {
+                    content.classList.remove('hidden');
+                    icon.style.transform = 'rotate(180deg)';
+                } else {
+                    content.classList.add('hidden');
+                    icon.style.transform = 'rotate(0deg)';
+                }
+            }
+        }
+
+        // ツールチップ表示関数
+        function showFrameworkTooltip(event, frameworkId) {
+            console.log('showFrameworkTooltip called:', frameworkId); // デバッグ用
+            const tooltip = document.getElementById('framework-tooltip');
+            const tooltipContent = document.getElementById('tooltip-content');
+            
+            console.log('tooltip element:', tooltip); // デバッグ用
+            console.log('tooltipContent element:', tooltipContent); // デバッグ用
+            
+            // フレームワーク別のアウトプットサンプル（既存のデータを利用）
+            const outputSamples = {
+                'empathy_map': {
+                    title: '共感マップ',
+                    sample: `<div class="space-y-2 text-xs">
+                        <div><strong>💭 考えていること：</strong> 「授業についていけているかな」</div>
+                        <div><strong>👀 見ているもの：</strong> 友達が活発に発言している様子</div>
+                        <div><strong>😊 嬉しいこと：</strong> 理解が進んだ時の達成感</div>
+                        <div><strong>😰 困っていること：</strong> 質問の仕方が分からない</div>
+                    </div>`
+                },
+                'persona_interview': {
+                    title: 'ペルソナインタビュー',
+                    sample: `<div class="space-y-2 text-xs">
+                        <div><strong>Q:</strong> 最近の学習で印象に残っていることは？</div>
+                        <div><strong>A:</strong> 「グループワークで他の人の意見を聞けた時です」</div>
+                        <div class="bg-green-100 p-2 rounded">学生の気持ちや価値観が見えてきます</div>
+                    </div>`
+                },
+                'persona_discussion': {
+                    title: 'ペルソナディスカッション',
+                    sample: `<div class="space-y-2 text-xs">
+                        <div><strong>👤A:</strong> 「グループワークって緊張するんですよね」</div>
+                        <div><strong>👤B:</strong> 「私は逆に楽しいです！色々な意見が聞けるから」</div>
+                        <div><strong>👤C:</strong> 「最初は緊張するけど、慣れると新しい発見がありますね」</div>
+                        <div class="bg-purple-100 p-2 rounded">異なる視点や価値観から新たな解決策が生まれます</div>
+                    </div>`
+                },
+                'student_journey': {
+                    title: '学生ジャーニーマップ',
+                    sample: `<div class="space-y-2 text-xs">
+                        <div><strong>📅 学期開始：</strong> やる気満々 → 計画を立てる</div>
+                        <div><strong>📅 中間期：</strong> 少し疲れ → 友達と情報共有</div>
+                        <div><strong>📅 学期末：</strong> 達成感と反省 → 振り返り</div>
+                        <div class="bg-green-100 p-2 rounded">時間軸での変化が見えます</div>
+                    </div>`
+                },
+                'user_story_mapping': {
+                    title: 'ユーザーストーリーマッピング',
+                    sample: `<div class="space-y-2 text-xs">
+                        <div class="bg-blue-50 p-2 rounded"><strong>🎯 学習の価値：</strong> 将来に活かしたい</div>
+                        <div><strong>基本ニーズ：</strong> 授業理解、質問しやすさ</div>
+                        <div><strong>成長ニーズ：</strong> 応用力、発言への自信</div>
+                    </div>`
+                },
+                'service_blueprint': {
+                    title: 'サービスブループリント',
+                    sample: `<div class="space-y-2 text-xs">
+                        <div class="bg-blue-50 p-2 rounded"><strong>見える部分：</strong> 授業、質問対応</div>
+                        <div class="bg-yellow-50 p-2 rounded"><strong>見えない準備：</strong> 教材準備、個別検討</div>
+                        <div class="bg-green-50 p-2 rounded"><strong>つながり：</strong> 雰囲気作り ↔ 個別フォロー</div>
+                    </div>`
+                },
+                'ecosystem_map': {
+                    title: 'エコシステムマップ',
+                    sample: `<div class="space-y-2 text-xs">
+                        <div class="text-center"><strong>👤 学生</strong>を中心とした関係性</div>
+                        <div class="grid grid-cols-2 gap-1">
+                            <div>🏫 大学</div><div>👫 友人</div>
+                            <div>👨‍👩‍👧‍👦 家族</div><div> バイト先</div>
+                        </div>
+                        <div class="bg-green-100 p-2 rounded">環境全体での支えと課題が見えます</div>
+                    </div>`
+                },
+                'stakeholder_map': {
+                    title: 'ステークホルダーマップ',
+                    sample: `<div class="space-y-2 text-xs">
+                        <div class="bg-red-50 p-2 rounded"><strong>影響大・関心高：</strong> 指導教員、友人</div>
+                        <div class="bg-orange-50 p-2 rounded"><strong>影響大・関心低：</strong> 学部、事務室</div>
+                        <div class="bg-yellow-50 p-2 rounded"><strong>影響小・関心高：</strong> 同級生</div>
+                    </div>`
+                }
+            };
+            
+            const sample = outputSamples[frameworkId];
+            console.log('sample data:', sample); // デバッグ用
+            if (sample) {
+                tooltipContent.innerHTML = `
+                    <div class="p-3">
+                        <div class="text-sm font-medium text-gray-800 mb-2">${sample.title}で分析すると...</div>
+                        ${sample.sample}
+                        <div class="mt-2 text-xs text-gray-500">
+                            💡 実際の分析では、選択したペルソナに合わせてより具体的な結果が得られます
+                        </div>
+                    </div>
+                `;
+                
+                // マウス位置に近いポジションを計算
+                const rect = event.target.closest('.framework-item').getBoundingClientRect();
+                console.log('rect:', rect); // デバッグ用
+                const viewportWidth = window.innerWidth;
+                const tooltipWidth = 320; // max-w-sm の幅（約320px）
+                
+                // ツールチップの位置を計算（要素の右側に表示、画面外に出る場合は左側に）
+                let left = rect.right + 10;
+                if (left + tooltipWidth > viewportWidth) {
+                    left = rect.left - tooltipWidth - 10;
+                }
+                
+                // 画面左端からはみ出さないように調整
+                if (left < 10) {
+                    left = 10;
+                }
+                
+                console.log('tooltip position:', left, rect.top + window.scrollY); // デバッグ用
+                tooltip.style.left = left + 'px';
+                tooltip.style.top = (rect.top + window.scrollY) + 'px';
+                tooltip.classList.remove('hidden');
+                tooltip.classList.add('show'); // show クラスを追加
+                console.log('tooltip should be visible now'); // デバッグ用
+            }
+        }
+
+        // ツールチップ非表示関数
+        function hideFrameworkTooltip() {
+            console.log('hideFrameworkTooltip called'); // デバッグ用
+            const tooltip = document.getElementById('framework-tooltip');
+            tooltip.classList.add('hidden');
+            tooltip.classList.remove('show'); // show クラスを削除
+        }
+
+        // 旧関数（互換性のため残存）
+        function showOutputSample(frameworkId) {
+            // ツールチップ版に移行したため、この関数は使用しない
+        }
+
+        function hideOutputSample() {
+            // ツールチップ版に移行したため、この関数は使用しない
         }
     </script>
 </body>
